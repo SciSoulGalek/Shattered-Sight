@@ -3,21 +3,28 @@ using UnityEngine.SceneManagement;
 
 public class FinishLine : MonoBehaviour
 {
-    void Start()
-    {
-        
-    }
+    [Header("Level Info")]
+    public int thisLevelIndex = 1;            // 1..10
+    public string nextLevelSceneName = "";    // e.g. "Level2", or "" if last level
 
-    void Update()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        
-    }
+        if (!other.CompareTag("Player")) return;
 
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("Player"))
+        // Save progress
+        GameProgress.CompleteLevel(thisLevelIndex);
+
+        // Load next scene or main menu
+        if (!string.IsNullOrEmpty(nextLevelSceneName))
         {
-            SceneManager.LoadScene("Level2");
+            SceneManager.LoadScene(nextLevelSceneName);
+        }
+        else
+        {
+            SceneManager.LoadScene("MainMenu");
         }
     }
+
+    // If 3D:
+    // private void OnTriggerEnter(Collider other) { ... same logic ... }
 }

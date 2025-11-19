@@ -9,36 +9,11 @@ public class LevelProgress : MonoBehaviour
 
     public void CompleteLevel()
     {
-        int highestUnlocked = PlayerPrefs.GetInt("HighestUnlocked", 1);
-
-        // Unlock next level if there is one
+        GameProgress.CompleteLevel(thisLevelIndex);
         if (!string.IsNullOrEmpty(nextLevelSceneName))
-        {
-            int nextIndex = thisLevelIndex + 1;
-
-            if (nextIndex > highestUnlocked)
-                PlayerPrefs.SetInt("HighestUnlocked", nextIndex);
-
-            PlayerPrefs.SetInt("NextLevel", nextIndex);
-            PlayerPrefs.SetInt("HasProgress", 1);
-        }
-        else
-        {
-            // last level: mark finished, but don't go beyond
-            PlayerPrefs.SetInt("NextLevel", thisLevelIndex);
-            PlayerPrefs.SetInt("HasProgress", 1);
-        }
-
-        PlayerPrefs.Save();
-
-        // Load next scene (or maybe show "You win" screen first)
-        if (!string.IsNullOrEmpty(nextLevelSceneName))
-        {
             SceneManager.LoadScene(nextLevelSceneName);
-        }
         else
-        {
-            SceneManager.LoadScene("MainMenu"); // back to menu after last level
-        }
+            SceneManager.LoadScene("MainMenu");
     }
+
 }

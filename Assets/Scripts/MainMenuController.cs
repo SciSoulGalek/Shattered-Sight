@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI; // change to TMPro if using TextMeshProUGUI
+using TMPro;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -11,43 +12,31 @@ public class MainMenuController : MonoBehaviour
 
     [Header("UI")]
     public Button playButton;
-    public Text playButtonLabel; // or TextMeshProUGUI
+    public TextMeshProUGUI playButtonLabel; // or TextMeshProUGUI
 
     bool hasProgress;
     int nextLevelIndex;
 
     void Start()
     {
-        // Load saved progress
-        nextLevelIndex = PlayerPrefs.GetInt("NextLevel", 1);
-        hasProgress = PlayerPrefs.GetInt("HasProgress", 0) == 1 && nextLevelIndex > 1;
-
-        // Set label
-        if (hasProgress)
-            playButtonLabel.text = "Continue";
-        else
-            playButtonLabel.text = "New Game";
+        playButtonLabel.text = GameProgress.HasProgress && GameProgress.NextLevel > 1
+            ? "Continue"
+            : "New Game";
     }
-
+    
     public void OnPlayPressed()
     {
-        if (hasProgress)
+        if (GameProgress.HasProgress && GameProgress.NextLevel > 1)
         {
-            // Continue from next level
-            string sceneToLoad = "Level" + nextLevelIndex;
-            SceneManager.LoadScene(sceneToLoad);
+            SceneManager.LoadScene("Level" + GameProgress.NextLevel);
         }
         else
         {
-            // Start fresh
-            PlayerPrefs.SetInt("NextLevel", 1);
-            PlayerPrefs.SetInt("HighestUnlocked", 1);
-            PlayerPrefs.SetInt("HasProgress", 0);
-            PlayerPrefs.Save();
-
-            SceneManager.LoadScene(firstLevelSceneName);
+            GameProgress.ResetProgress();
+            SceneManager.LoadScene("Level1");
         }
     }
+
 
     public void OnLevelsPressed()
     {

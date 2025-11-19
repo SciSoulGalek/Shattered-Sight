@@ -1,26 +1,49 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using TMPro; // если используешь TextMeshPro
 
 public class SettingsMenu : MonoBehaviour
 {
+    [Header("Scene")]
     public string mainMenuSceneName = "MainMenu";
-    public Button resetProgressButton;
+
+    [Header("UI")]
+    public TextMeshProUGUI progressText; // сюда выведем PlayerPrefs
+
+    void Start()
+    {
+        UpdateProgressText();
+    }
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnBackPressed();
+        }
+    }
+
+    void UpdateProgressText()
+    {
+        // Подтягиваем данные из GameProgress
+        int highest = GameProgress.HighestUnlocked;
+        int next = GameProgress.NextLevel;
+        bool hasProgress = GameProgress.HasProgress;
+
+        if (progressText)
+        {
+            progressText.text =
+                $"HighestUnlocked: {highest}\n" +
+                $"NextLevel: {next}\n" +
+                $"HasProgress: {hasProgress}";
+        }
+    }
 
     public void OnResetProgressPressed()
     {
-        // Clear only our keys (safer than PlayerPrefs.DeleteAll)
-        PlayerPrefs.DeleteKey("NextLevel");
-        PlayerPrefs.DeleteKey("HighestUnlocked");
-        PlayerPrefs.DeleteKey("HasProgress");
-        PlayerPrefs.Save();
-
-        Debug.Log("Progress reset.");
-
-        // Optional: show a simple popup or text "Progress reset"
-        // Or just go back to main menu:
-        SceneManager.LoadScene(mainMenuSceneName);
+        GameProgress.ResetProgress();
+        UpdateProgressText();
     }
+
 
     public void OnBackPressed()
     {

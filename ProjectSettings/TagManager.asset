@@ -5,14 +5,17 @@ TagManager:
   serializedVersion: 3
   tags:
   - Ground
+  - Hazard
+  - Box
+  - MovingPlatform
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - RotZone
+  - Ground
   - Water
   - UI
-  - 
+  - Shard
   - 
   - 
   - 

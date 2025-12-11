@@ -1,46 +1,128 @@
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerController2D : MonoBehaviour
 {
-    public float speed;
-    private float Move;
+    [Header("Movement")]
+    public float moveSpeed = 6f;
 
-    public float jump;
-    private bool isJumping = true;
+    [Header("Jump")]
+    public float jumpForce = 12f;              
+    [Range(0f, 1f)]
+    public float jumpCutMultiplier = 0.5f;    
+    public float coyoteTime = 0.1f;         
+    public float jumpBufferTime = 0.1f;      
+
+    [Header("Ground Check")]
+    public Transform groundCheck;
+    public float groundCheckRadius = 0.1f;
+    public LayerMask groundLayer;
 
     private Rigidbody2D rb;
+    private Animator anim;
 
-    void Start()
+    private float moveInput;
+    private bool jumpHeld;
+
+    private bool isGrounded;
+    private bool wasGrounded;
+    private float coyoteCounter;
+    private float jumpBufferCounter;
+
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
 
-    void Update()
+    private void Start()
     {
-        Move = Input.GetAxis("Horizontal");
+        rb.freezeRotation = true;
+        wasGrounded = false;
+    }
 
-        rb.linearVelocity = new Vector2(speed * Move, rb.linearVelocity.y);
-    
-        if(Input.GetButtonDown("Jump") && isJumping == false)
+    private void Update()
+    {
+        moveInput = Input.GetAxisRaw("Horizontal");
+        bool jumpPressedThisFrame = Input.GetButtonDown("Jump");
+        jumpHeld = Input.GetButton("Jump");
+
+        wasGrounded = isGrounded;
+
+        if (groundCheck != null)
         {
-            rb.AddForce(new Vector2(rb.linearVelocity.x, jump));
+            isGrounded = Physics2D.OverlapCircle(
+                groundCheck.position,
+                groundCheckRadius,
+                groundLayer
+            );
+        }
+        else
+        {
+            isGrounded = false;
         }
 
-    }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if(other.gameObject.CompareTag("Ground"))
+        if (isGrounded)
         {
-            isJumping = false;
+            coyoteCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteCounter -= Time.deltaTime;
+        }
+
+        if (jumpPressedThisFrame)
+        {
+            jumpBufferCounter = jumpBufferTime;
+        }
+        else
+        {
+            jumpBufferCounter -= Time.deltaTime;
+        }
+
+        if (!wasGrounded && isGrounded)
+        {
+            if (anim != null)
+            {
+                anim.Play("Player_JumpSquash", 0, 0f);
+            }
         }
     }
 
-    private void OnCollisionExit2D(Collision2D other)
+    private void FixedUpdate()
     {
-        if(other.gameObject.CompareTag("Ground"))
+        Vector2 v = rb.linearVelocity;
+        v.x = moveInput * moveSpeed;
+        rb.linearVelocity = v;
+
+        if (jumpBufferCounter > 0f && coyoteCounter > 0f)
         {
-            isJumping = true;
+            v = rb.linearVelocity;
+            v.y = jumpForce;
+            rb.linearVelocity = v;
+
+            jumpBufferCounter = 0f;
+            coyoteCounter = 0f;
+
+            if (anim != null)
+            {
+                anim.Play("Player_JumpSquash", 0, 0f);
+            }
+        }
+
+        if (!jumpHeld && rb.linearVelocity.y > 0f)
+        {
+            v = rb.linearVelocity;
+            v.y *= jumpCutMultiplier;
+            rb.linearVelocity = v;
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
     }
 }

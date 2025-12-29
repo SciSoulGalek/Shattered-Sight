@@ -10,7 +10,6 @@ public class PauseMenu : MonoBehaviour
 
     void Start()
     {
-        // На всякий случай
         if (pausePanel != null)
             pausePanel.SetActive(false);
 
@@ -55,7 +54,6 @@ public class PauseMenu : MonoBehaviour
 
     void OnDisable()
     {
-        // На всякий случай, чтобы игра не зависла если объект/сцена перезагрузились
         Time.timeScale = 1f;
     }
 }

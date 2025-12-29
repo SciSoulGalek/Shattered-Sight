@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro; // если используешь TextMeshPro
+using TMPro;
 
 public class SettingsMenu : MonoBehaviour
 {
@@ -8,7 +8,7 @@ public class SettingsMenu : MonoBehaviour
     public string mainMenuSceneName = "MainMenu";
 
     [Header("UI")]
-    public TextMeshProUGUI progressText; // сюда выведем PlayerPrefs
+    public TextMeshProUGUI progressText;
 
     void Start()
     {
@@ -24,7 +24,6 @@ public class SettingsMenu : MonoBehaviour
 
     void UpdateProgressText()
     {
-        // Подтягиваем данные из GameProgress
         int highest = GameProgress.HighestUnlocked;
         int next = GameProgress.NextLevel;
         bool hasProgress = GameProgress.HasProgress;

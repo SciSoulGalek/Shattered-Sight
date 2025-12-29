@@ -4,8 +4,8 @@ using UnityEngine.SceneManagement;
 public class LevelProgress : MonoBehaviour
 {
     [Header("Level Info")]
-    public int thisLevelIndex = 1;          // 1,2,3...
-    public string nextLevelSceneName = "Level2";  // or "" if last level
+    public int thisLevelIndex = 1;      
+    public string nextLevelSceneName = "Level2";
 
     public void CompleteLevel()
     {

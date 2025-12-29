@@ -5,12 +5,12 @@ using TMPro;
 
 public class LevelSelectButton : MonoBehaviour
 {
-    public int levelIndex = 1;              // 1..10
-    public string sceneName = "Level1";     // "Level1".."Level10"
+    public int levelIndex = 1;           
+    public string sceneName = "Level1";   
 
     public Button button;
-    public TextMeshProUGUI label;           // optional, for showing the number
-    public GameObject lockIcon;             // optional
+    public TextMeshProUGUI label; 
+    public GameObject lockIcon;            
 
     void Awake()
     {

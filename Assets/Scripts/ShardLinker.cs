@@ -17,9 +17,7 @@ public class ShardLinker : MonoBehaviour
         if (texA == null || texB == null)
             return;
 
-        // A показывает B
         shardA.SetDisplayTexture(texB);
-        // B показывает A
         shardB.SetDisplayTexture(texA);
     }
 }

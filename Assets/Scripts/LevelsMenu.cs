@@ -7,7 +7,6 @@ public class LevelsMenu : MonoBehaviour
 
     void Update()
     {
-        // ESC key → same as Back button
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             OnBackPressed();

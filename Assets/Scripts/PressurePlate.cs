@@ -3,13 +3,13 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class PressurePlate2D : MonoBehaviour
 {
-    [Header("Кто может активировать плиту")]
+    [Header("Activator")]
     public string[] activatorTags = { "Player", "Box" };
 
-    [Header("Что управляем")]
+    [Header("Platform")]
     public MovingPlatform2D platformToControl;
 
-    [Header("Анимация плиты")]
+    [Header("Plate Animation")]
     public Vector3 pressedOffset = new Vector3(0f, -0.1f, 0f);
     public float moveSpeed = 10f;                              
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI; // change to TMPro if using TextMeshProUGUI
+using UnityEngine.UI;
 using TMPro;
 
 public class MainMenuController : MonoBehaviour
@@ -12,7 +12,7 @@ public class MainMenuController : MonoBehaviour
 
     [Header("UI")]
     public Button playButton;
-    public TextMeshProUGUI playButtonLabel; // or TextMeshProUGUI
+    public TextMeshProUGUI playButtonLabel;
 
     bool hasProgress;
     int nextLevelIndex;

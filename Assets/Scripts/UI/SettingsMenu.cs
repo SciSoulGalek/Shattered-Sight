@@ -10,16 +10,28 @@ public class SettingsMenu : MonoBehaviour
     [Header("UI")]
     public TextMeshProUGUI progressText;
 
-    void Start()
+    private InputSystem_Actions controls;
+
+    private void Awake()
+    {
+        controls = new InputSystem_Actions();
+
+        controls.UI.Back.performed += ctx => OnBackPressed();
+    }
+
+    private void OnEnable()
+    {
+        controls.UI.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.UI.Disable();
+    }
+
+    private void Start()
     {
         UpdateProgressText();
-    }
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            OnBackPressed();
-        }
     }
 
     void UpdateProgressText()
@@ -42,7 +54,6 @@ public class SettingsMenu : MonoBehaviour
         GameProgress.ResetProgress();
         UpdateProgressText();
     }
-
 
     public void OnBackPressed()
     {

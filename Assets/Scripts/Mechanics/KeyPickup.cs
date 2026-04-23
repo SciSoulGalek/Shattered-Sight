@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider2D))]
 public class KeyPickup : MonoBehaviour
 {
-    public Door2D doorToOpen;
+    public static event Action OnKeyCollected;
+
     public string playerTag = "Player";
 
     private void Reset()
@@ -17,10 +18,7 @@ public class KeyPickup : MonoBehaviour
         if (!other.CompareTag(playerTag))
             return;
 
-        if (doorToOpen != null)
-        {
-            doorToOpen.Open();
-        }
+        OnKeyCollected?.Invoke();
 
         Destroy(gameObject);
     }

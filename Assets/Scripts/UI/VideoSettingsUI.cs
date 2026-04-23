@@ -17,7 +17,7 @@ public class Resolutions : MonoBehaviour
         public int height;
     }
 
-    [Header("Fixed options (один и тот же аспект, напр. 16:9)")]
+    [Header("Fixed options")]
     public ResolutionOption[] options = new ResolutionOption[]
     {
         new ResolutionOption { label = "1280 x 720",  width = 1280, height = 720 },

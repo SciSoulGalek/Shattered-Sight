@@ -6,6 +6,7 @@ public class PauseMenu : MonoBehaviour
     public GameObject pausePanel;
     public string mainMenuSceneName = "MainMenu";
 
+    private InputSystem_Actions controls;
     private bool isPaused = false;
 
     void Start()
@@ -16,12 +17,16 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    void Update()
+    private void OnEnable()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            TogglePause();
-        }
+        controls.Enable();
+    }
+
+    private void Awake()
+    {
+        controls = new InputSystem_Actions();
+
+        controls.Player.Pause.performed += ctx => TogglePause();
     }
     
     public void TogglePause()
@@ -54,6 +59,7 @@ public class PauseMenu : MonoBehaviour
 
     void OnDisable()
     {
+        controls.Disable();
         Time.timeScale = 1f;
     }
 }

@@ -15,73 +15,51 @@ public class PlayerRespawn : MonoBehaviour
 
     private void Awake()
     {
-        _rb        = GetComponent<Rigidbody2D>();
-        _effects   = GetComponent<PlayerEffects>();
+        _rb = GetComponent<Rigidbody2D>();
+        _effects = GetComponent<PlayerEffects>();
         _controller = GetComponent<PlayerController2D>();
     }
 
     private void Start()
     {
-        _fallbackSpawnPos = transform.position;
-    }
-
-    private Vector3 GetSpawnPosition()
-    {
-        return spawnPoint ? spawnPoint.position : _fallbackSpawnPos;
+        if (spawnPoint != null)
+            transform.position = spawnPoint.position;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Hazard")) return;
-        if (_isDying) return;
 
-        StartCoroutine(DeathSequence());
+        Die();
     }
 
-    private IEnumerator DeathSequence()
+    public void Die()
     {
+        if (_isDying) return;
+        if (GameStateManager.Instance.CurrentState != GameState.Playing) return;
+
         _isDying = true;
 
+        GameStateManager.Instance.SetState(GameState.Dying);
+
+        StartCoroutine(DeathRoutine());
+    }
+
+    private IEnumerator DeathRoutine()
+    {
         if (_controller != null)
             _controller.enabled = false;
 
         if (_rb != null)
-        {
             _rb.linearVelocity = Vector2.zero;
-            _rb.angularVelocity = 0f;
-            _rb.simulated = false; 
-        }
 
-        float deathWait = 0.3f;
         if (_effects != null)
-        {
             _effects.PlayDeath();
-            if (_effects.deathAnimDuration > 0f)
-                deathWait = _effects.deathAnimDuration;
-        }
 
-        if (deathWait > 0f)
-            yield return new WaitForSeconds(deathWait);
+        yield return new WaitForSeconds(0.3f);
 
-        transform.position = GetSpawnPosition();
+        GameStateManager.Instance.SetState(GameState.Transitioning);
 
-        float spawnWait = 0.1f;
-        if (_effects != null)
-        {
-            _effects.PlaySpawn();
-            if (_effects.spawnAnimDuration > 0f)
-                spawnWait = _effects.spawnAnimDuration;
-        }
-
-        if (spawnWait > 0f)
-            yield return new WaitForSeconds(spawnWait);
-
-        if (_rb != null)
-            _rb.simulated = true;
-
-        if (_controller != null)
-            _controller.enabled = true;
-
-        _isDying = false;
+        LevelTransition.Instance.RestartLevel();
     }
 }

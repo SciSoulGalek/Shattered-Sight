@@ -1,25 +1,25 @@
-using System;
 using UnityEngine;
 
 public class KeyPickup : MonoBehaviour
 {
-    public static event Action OnKeyCollected;
-
+    [SerializeField] private string keyID;
     public string playerTag = "Player";
 
     private void Reset()
     {
-        var col = GetComponent<Collider2D>();
-        col.isTrigger = true;
+        GetComponent<Collider2D>().isTrigger = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag(playerTag))
-            return;
+        Debug.Log("HIT: " + other.name);
 
-        OnKeyCollected?.Invoke();
+        if (other.CompareTag(playerTag))
+        {
+            Debug.Log("KEY COLLECTED: " + keyID);
 
-        Destroy(gameObject);
+            GameEvents.OnKeyCollected?.Invoke(keyID);
+            Destroy(gameObject);
+        }
     }
 }

@@ -43,12 +43,11 @@ public class PauseMenu : MonoBehaviour
             TogglePause();
     }
     
-    
     public void OnRestartPressed()
     {
+        pausePanel.SetActive(false);
         Time.timeScale = 1f;
-        Scene current = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(current.name);
+        FindFirstObjectByType<PlayerRespawn>().Die();
     }
 
     public void OnMainMenuPressed()

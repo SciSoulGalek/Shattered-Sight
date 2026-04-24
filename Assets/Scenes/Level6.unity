@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7888be14a3bf3a4a9016b73ce581d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KeyPickup
-  doorToOpen: {fileID: 1422389732}
+  keyID: 1
   playerTag: Player
 --- !u!61 &26785793
 BoxCollider2D:
@@ -3959,10 +3959,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelTransition
   fadeGroup: {fileID: 280151301}
-  preFadeDelay: 1
-  fadeOutTime: 0.7
-  fadeInTime: 0.7
-  delayAfterLoad: 3
+  preFadeDelay: 0
+  fadeOutTime: 0.3
+  fadeInTime: 0.3
+  delayAfterLoad: 0
 --- !u!1 &734905583
 GameObject:
   m_ObjectHideFlags: 0
@@ -4591,6 +4591,50 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &986734485
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 986734487}
+  - component: {fileID: 986734486}
+  m_Layer: 0
+  m_Name: GameStateManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &986734486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986734485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29f145d21d8dde94bb214e3b7ee51709, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameStateManager
+--- !u!4 &986734487
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986734485}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 40.56433, y: -0.5419, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1167336779
 GameObject:
   m_ObjectHideFlags: 0
@@ -5418,6 +5462,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Door2D
   openOffset: {x: 4, y: 0, z: 0}
   openDuration: 0.5
+  requiredKeyID: 1
 --- !u!61 &1422389733
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -6714,7 +6759,7 @@ Transform:
   m_GameObject: {fileID: 1847448691}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 28.5, y: 4.5, z: 0}
+  m_LocalPosition: {x: 34.53, y: -2.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6784,6 +6829,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Door2D
   openOffset: {x: 4, y: 0, z: 0}
   openDuration: 0.5
+  requiredKeyID: 2
 --- !u!1 &1879016419
 GameObject:
   m_ObjectHideFlags: 0
@@ -7655,6 +7701,7 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 2136194408}
+  - {fileID: 986734487}
   - {fileID: 1529926040}
   - {fileID: 734905585}
   - {fileID: 2030217730}

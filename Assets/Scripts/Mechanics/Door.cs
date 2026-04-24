@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Door2D : MonoBehaviour
+public class Door : MonoBehaviour
 {
     [Header("Animation")]
     public Vector3 openOffset = new Vector3(0f, 2f, 0f);
@@ -9,6 +9,8 @@ public class Door2D : MonoBehaviour
 
     private Vector3 _closedPos;
     private Vector3 _openPos;
+
+    [SerializeField] private string requiredKeyID;
     private bool _isOpen;
     private Coroutine _animRoutine;
     private Collider2D _collider;
@@ -22,12 +24,22 @@ public class Door2D : MonoBehaviour
 
     private void OnEnable()
     {
-        KeyPickup.OnKeyCollected += Open;
+        GameEvents.OnKeyCollected += TryOpen;
     }
 
     private void OnDisable()
     {
-        KeyPickup.OnKeyCollected -= Open;
+        GameEvents.OnKeyCollected -= TryOpen;
+    }
+
+    private void TryOpen(string keyID)
+    {
+        if (_isOpen) return;
+
+        if (keyID == requiredKeyID)
+        {
+            Open();
+        }
     }
 
     public void Open()

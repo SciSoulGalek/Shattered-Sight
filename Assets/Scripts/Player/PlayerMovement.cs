@@ -7,11 +7,10 @@ public class PlayerController2D : MonoBehaviour
     public float moveSpeed = 6f;
 
     [Header("Jump")]
-    public float jumpForce = 12f;              
-    [Range(0f, 1f)]
-    public float jumpCutMultiplier = 0.5f;    
-    public float coyoteTime = 0.1f;         
-    public float jumpBufferTime = 0.1f;      
+    public float jumpForce = 12f;
+    [Range(0f, 1f)] public float jumpCutMultiplier = 0.5f;
+    public float coyoteTime = 0.1f;
+    public float jumpBufferTime = 0.1f;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -32,14 +31,6 @@ public class PlayerController2D : MonoBehaviour
 
     private InputSystem_Actions controls;
 
-    private void OnEnable()
-    {   
-        if (controls == null)
-            controls = new InputSystem_Actions();
-
-        controls.Enable();
-    }
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -47,11 +38,17 @@ public class PlayerController2D : MonoBehaviour
 
         controls = new InputSystem_Actions();
 
-        // Movement
-        controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>().x;
-        controls.Player.Move.canceled += ctx => moveInput = 0f;
+        // INPUT BINDINGS
+        controls.Player.Move.performed += ctx =>
+        {
+            moveInput = ctx.ReadValue<Vector2>().x;
+        };
 
-        // Jump
+        controls.Player.Move.canceled += ctx =>
+        {
+            moveInput = 0f;
+        };
+
         controls.Player.Jump.performed += ctx =>
         {
             jumpPressedThisFrame = true;
@@ -64,17 +61,64 @@ public class PlayerController2D : MonoBehaviour
         };
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        rb.freezeRotation = true;
-        wasGrounded = false;
+        controls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Disable();
     }
 
     private void Update()
     {
+        // Always update ground + timers (important for feel consistency)
+        HandleGrounding();
+        HandleJumpTimers();
+
+        // Block INPUT only, not physics logic
+        if (!GameStateManager.Instance.IsPlaying())
+            return;
+
+        HandleMovementInput();
+    }
+
+    private void FixedUpdate()
+    {
+        if (!GameStateManager.Instance.IsPlaying())
+            return;
+
+        HandleMovementPhysics();
+        HandleJumpPhysics();
+        HandleVariableJumpCut();
+    }
+
+    // ----------------------------
+    // INPUT
+    // ----------------------------
+    private void HandleMovementInput()
+    {
+        // nothing else needed here for now
+    }
+
+    // ----------------------------
+    // MOVEMENT
+    // ----------------------------
+    private void HandleMovementPhysics()
+    {
+        Vector2 v = rb.linearVelocity;
+        v.x = moveInput * moveSpeed;
+        rb.linearVelocity = v;
+    }
+
+    // ----------------------------
+    // GROUND CHECK + TIMERS
+    // ----------------------------
+    private void HandleGrounding()
+    {
         wasGrounded = isGrounded;
 
-        // Ground check
         if (groundCheck != null)
         {
             isGrounded = Physics2D.OverlapCircle(
@@ -83,27 +127,13 @@ public class PlayerController2D : MonoBehaviour
                 groundLayer
             );
         }
-        else
-        {
-            isGrounded = false;
-        }
 
-        // Coyote time
         if (isGrounded)
             coyoteCounter = coyoteTime;
         else
             coyoteCounter -= Time.deltaTime;
 
-        // Jump buffer
-        if (jumpPressedThisFrame)
-            jumpBufferCounter = jumpBufferTime;
-        else
-            jumpBufferCounter -= Time.deltaTime;
-
-        // Reset "pressed this frame"
-        jumpPressedThisFrame = false;
-
-        // Landing animation
+        // landing animation
         if (!wasGrounded && isGrounded)
         {
             if (anim != null)
@@ -111,16 +141,24 @@ public class PlayerController2D : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    private void HandleJumpTimers()
     {
-        Vector2 v = rb.linearVelocity;
-        v.x = moveInput * moveSpeed;
-        rb.linearVelocity = v;
+        if (jumpPressedThisFrame)
+            jumpBufferCounter = jumpBufferTime;
+        else
+            jumpBufferCounter -= Time.deltaTime;
 
-        // Jump
+        jumpPressedThisFrame = false;
+    }
+
+    // ----------------------------
+    // JUMP
+    // ----------------------------
+    private void HandleJumpPhysics()
+    {
         if (jumpBufferCounter > 0f && coyoteCounter > 0f)
         {
-            v = rb.linearVelocity;
+            Vector2 v = rb.linearVelocity;
             v.y = jumpForce;
             rb.linearVelocity = v;
 
@@ -130,15 +168,21 @@ public class PlayerController2D : MonoBehaviour
             if (anim != null)
                 anim.Play("Player_JumpSquash", 0, 0f);
         }
+    }
 
+    private void HandleVariableJumpCut()
+    {
         if (!jumpHeld && rb.linearVelocity.y > 0f)
         {
-            v = rb.linearVelocity;
+            Vector2 v = rb.linearVelocity;
             v.y *= jumpCutMultiplier;
             rb.linearVelocity = v;
         }
     }
 
+    // ----------------------------
+    // DEBUG
+    // ----------------------------
     private void OnDrawGizmosSelected()
     {
         if (groundCheck != null)
@@ -146,11 +190,5 @@ public class PlayerController2D : MonoBehaviour
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
-    }
-
-    private void OnDisable()
-    {
-        controls.Disable();
-        Time.timeScale = 1f;
     }
 }

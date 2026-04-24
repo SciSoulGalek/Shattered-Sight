@@ -11,9 +11,9 @@ public class LevelTransition : MonoBehaviour
 
     [Header("Timings")]
     public float preFadeDelay   = 0.0f; 
-    public float fadeOutTime    = 0.7f;
-    public float fadeInTime     = 0.7f; 
-    public float delayAfterLoad = 0.2f; 
+    public float fadeOutTime    = 0.3f;
+    public float fadeInTime     = 0.3f; 
+    public float delayAfterLoad = 0.0f; 
 
     private void Awake()
     {
@@ -45,13 +45,21 @@ public class LevelTransition : MonoBehaviour
         StartCoroutine(FadeAndLoadScene(nextIndex));
     }
 
-    private IEnumerator FadeAndLoadScene(string sceneName)
+    public void RestartLevel()
     {
+        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        StartCoroutine(FadeAndLoadScene(currentIndex));
+    }
+
+    private IEnumerator FadeAndLoadScene(string sceneName)
+    {   
         if (fadeGroup == null)
         {
             SceneManager.LoadScene(sceneName);
             yield break;
         }
+
+        GameStateManager.Instance.SetState(GameState.Loading);
 
         if (preFadeDelay > 0f)
             yield return new WaitForSeconds(preFadeDelay);
@@ -66,6 +74,8 @@ public class LevelTransition : MonoBehaviour
             yield return new WaitForSeconds(delayAfterLoad);
 
         yield return Fade(1f, 0f, fadeInTime);
+
+        GameStateManager.Instance.SetState(GameState.Playing);
     }
 
     private IEnumerator FadeAndLoadScene(int buildIndex)
@@ -88,6 +98,9 @@ public class LevelTransition : MonoBehaviour
             yield return new WaitForSeconds(delayAfterLoad);
 
         yield return Fade(1f, 0f, fadeInTime);
+        
+        GameStateManager.Instance.SetState(GameState.Playing);
+        
     }
 
     private IEnumerator Fade(float from, float to, float duration)

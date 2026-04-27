@@ -18,7 +18,7 @@ public class KeyPickup : MonoBehaviour
         {
             Debug.Log("KEY COLLECTED: " + keyID);
 
-            GameEvents.OnKeyCollected?.Invoke(keyID);
+            GameEvents.KeyCollected(keyID);
             Destroy(gameObject);
         }
     }

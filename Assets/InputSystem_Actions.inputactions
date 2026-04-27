@@ -25,6 +25,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "b9e0d4a4-4c3c-49ef-b86c-de8a7c7359c3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Pause",
                     "type": "Button",
                     "id": "02635f6b-fe35-446a-a466-4b7a193030cc",
@@ -397,6 +406,17 @@
                 },
                 {
                     "name": "",
+                    "id": "61c3d697-17e5-4f74-a6fa-629f6a967ea1",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "daba33a1-ad0c-4742-a909-43ad1cdfbeb6",
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
@@ -491,6 +511,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "def9408e-04a0-497d-8557-9a5b3d187e4e",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

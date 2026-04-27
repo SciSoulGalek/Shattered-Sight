@@ -6,23 +6,23 @@ public class PressurePlate2D : MonoBehaviour
     [Header("Activator")]
     public string[] activatorTags = { "Player", "Box" };
 
-    [Header("Platform")]
-    public MovingPlatform2D platformToControl;
+    [Header("ID Broadcast")]
+    [SerializeField] private string plateID;
 
     [Header("Plate Animation")]
     public Vector3 pressedOffset = new Vector3(0f, -0.1f, 0f);
-    public float moveSpeed = 10f;                              
+    public float moveSpeed = 10f;
 
     private int _objectsOnPlate = 0;
     private bool _isPressed;
 
-    private Vector3 _initialPos;
-    private Vector3 _pressedPos;
+    private Vector3 _initialLocalPos;
+    private Vector3 _pressedLocalPos;
 
     private void Awake()
     {
-        _initialPos = transform.position;
-        _pressedPos = _initialPos + pressedOffset;
+        _initialLocalPos = transform.localPosition;
+        _pressedLocalPos = _initialLocalPos + pressedOffset;
 
         var col = GetComponent<Collider2D>();
         col.isTrigger = true;
@@ -30,8 +30,13 @@ public class PressurePlate2D : MonoBehaviour
 
     private void Update()
     {
-        Vector3 target = _isPressed ? _pressedPos : _initialPos;
-        transform.position = Vector3.Lerp(transform.position, target, Time.deltaTime * moveSpeed);
+        Vector3 target = _isPressed ? _pressedLocalPos : _initialLocalPos;
+
+        transform.localPosition = Vector3.Lerp(
+            transform.localPosition,
+            target,
+            Time.deltaTime * moveSpeed
+        );
     }
 
     private bool IsActivator(Collider2D other)
@@ -41,6 +46,7 @@ public class PressurePlate2D : MonoBehaviour
             if (other.CompareTag(tag))
                 return true;
         }
+
         return false;
     }
 
@@ -50,13 +56,13 @@ public class PressurePlate2D : MonoBehaviour
 
         _objectsOnPlate++;
 
-        _isPressed = _objectsOnPlate > 0;
-
-        if (platformToControl != null)
+        if (!_isPressed)
         {
-            platformToControl.SetActive(true);
-        }
+            _isPressed = true;
 
+            if (!string.IsNullOrEmpty(plateID))
+                GameEvents.PlateActivated(plateID);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
@@ -64,12 +70,13 @@ public class PressurePlate2D : MonoBehaviour
         if (!IsActivator(other)) return;
 
         _objectsOnPlate = Mathf.Max(0, _objectsOnPlate - 1);
-        _isPressed = _objectsOnPlate > 0;
 
-        if (_objectsOnPlate == 0 && platformToControl != null)
+        if (_objectsOnPlate == 0 && _isPressed)
         {
-            platformToControl.SetActive(false);
-        }
+            _isPressed = false;
 
+            if (!string.IsNullOrEmpty(plateID))
+                GameEvents.PlateDeactivated(plateID);
+        }
     }
 }

@@ -1,13 +1,10 @@
 using UnityEngine;
 
-public class JumpPad2D : MonoBehaviour
+public class JumpPad : MonoBehaviour
 {
     public Vector2 launchDirection = Vector2.up;
-    public float launchSpeed = 13f;
+    public float bounceForce = 18f;
     public string playerTag = "Player";
-
-    [Header("Anti-stuck")]
-    public float pushOutDistance = 0.08f;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -15,16 +12,20 @@ public class JumpPad2D : MonoBehaviour
             return;
 
         Rigidbody2D rb = other.GetComponent<Rigidbody2D>();
-
         if (rb == null)
             return;
 
-        Vector2 direction = launchDirection.normalized;
+        PlayerController2D player = other.GetComponent<PlayerController2D>();
+        if (player != null)
+            player.CancelHeldJump();
 
-        // Move player slightly away from the wall/pad
-        rb.position += direction * pushOutDistance;
+        Vector2 dir = launchDirection.normalized;
 
-        // Replace velocity completely
-        rb.linearVelocity = direction * launchSpeed;
+        float existingSpeed = Vector2.Dot(rb.linearVelocity, dir);
+
+        if (existingSpeed > 0f)
+            rb.linearVelocity -= dir * existingSpeed;
+
+        rb.AddForce(dir * bounceForce, ForceMode2D.Impulse);
     }
 }

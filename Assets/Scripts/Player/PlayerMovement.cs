@@ -46,7 +46,6 @@ public class PlayerController2D : MonoBehaviour
 
     private bool jumpHeld;
     private bool jumpPressedThisFrame;
-
     private bool isGrounded;
     private bool wasGrounded;
     private float coyoteCounter;
@@ -54,16 +53,22 @@ public class PlayerController2D : MonoBehaviour
 
     private bool canDash = true;
     private bool isDashing;
+    public bool IsDashing => isDashing;
     private bool dashPressedThisFrame;
     private float originalGravity;
 
+    private PlayerGravity2D playerGravity;
+
     private InputSystem_Actions controls;
+    private bool controlsLocked;
+    public bool ControlsLocked => controlsLocked;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         originalGravity = rb.gravityScale;
+        playerGravity = GetComponent<PlayerGravity2D>();
 
         controls = new InputSystem_Actions();
 
@@ -117,7 +122,7 @@ public class PlayerController2D : MonoBehaviour
         HandleJumpTimers();
         UpdateDashIndicator();
 
-        if (!GameStateManager.Instance.IsPlaying())
+        if (!GameStateManager.Instance.IsPlaying() || controlsLocked)
             return;
 
         HandleDashInput();
@@ -125,7 +130,7 @@ public class PlayerController2D : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!GameStateManager.Instance.IsPlaying())
+        if (!GameStateManager.Instance.IsPlaying() || controlsLocked)
             return;
 
         if (currentPlatform != null && isGrounded)
@@ -146,9 +151,46 @@ public class PlayerController2D : MonoBehaviour
     // ----------------------------
     private void HandleMovementPhysics()
     {
-        Vector2 v = rb.linearVelocity;
-        v.x = moveInput * moveSpeed;
-        rb.linearVelocity = v;
+        Vector2 gravityDir = GetGravityDirection();
+
+        Vector2 moveDir;
+
+        if (gravityDir == Vector2.down)
+        {
+            moveDir = Vector2.right * moveVector.x;
+        }
+        else if (gravityDir == Vector2.up)
+        {
+            moveDir = Vector2.right * moveVector.x;
+        }
+        else if (gravityDir == Vector2.right)
+        {
+            moveDir = Vector2.up * moveVector.y;
+        }
+        else
+        {
+            moveDir = Vector2.up * moveVector.y;
+        }
+
+        // current velocity along gravity axis
+        Vector2 gravityVelocity =
+            gravityDir * Vector2.Dot(rb.linearVelocity, gravityDir);
+
+        // current sideways movement
+        Vector2 sidewaysVelocity =
+            moveDir * Vector2.Dot(rb.linearVelocity, moveDir.normalized);
+
+        // target movement
+        Vector2 targetMoveVelocity = moveDir * moveSpeed;
+
+        // smoothly move toward target instead of replacing velocity
+        sidewaysVelocity = Vector2.Lerp(
+            sidewaysVelocity,
+            targetMoveVelocity,
+            12f * Time.fixedDeltaTime
+        );
+
+        rb.linearVelocity = gravityVelocity + sidewaysVelocity;
     }
 
     // ----------------------------
@@ -158,8 +200,13 @@ public class PlayerController2D : MonoBehaviour
     {
         wasGrounded = isGrounded;
 
+        Vector2 gravityDir = GetGravityDirection();
+
         if (groundCheck != null)
         {
+            // Move ground check in WORLD direction of gravity
+            groundCheck.position = (Vector2)transform.position + gravityDir * 0.55f;
+
             isGrounded = Physics2D.OverlapCircle(
                 groundCheck.position,
                 groundCheckRadius,
@@ -186,6 +233,49 @@ public class PlayerController2D : MonoBehaviour
         }
     }
 
+    public void LockControls(float duration)
+    {
+        StartCoroutine(LockControlsRoutine(duration));
+    }
+
+    private IEnumerator LockControlsRoutine(float duration)
+    {
+        controlsLocked = true;
+
+        yield return new WaitForSeconds(duration);
+
+        controlsLocked = false;
+    }
+
+    // ----------------------------
+    // JUMP
+    // ----------------------------
+    private void HandleJumpPhysics()
+    {
+        if (jumpBufferCounter <= 0f)
+            return;
+
+        if (!isGrounded && coyoteCounter <= 0f)
+            return;
+
+
+        Vector2 gravityDir = GetGravityDirection();
+        Vector2 jumpDir = -gravityDir;
+
+        float speedAlongJump = Vector2.Dot(rb.linearVelocity, jumpDir);
+
+        if (speedAlongJump > 0f)
+            rb.linearVelocity -= jumpDir * speedAlongJump;
+
+        rb.linearVelocity += jumpDir * jumpForce;
+
+        jumpBufferCounter = 0f;
+        coyoteCounter = 0f;
+
+        if (anim != null)
+            anim.Play("Player_JumpSquash", 0, 0f);
+    }
+
     private void HandleJumpTimers()
     {
         if (jumpPressedThisFrame)
@@ -196,33 +286,24 @@ public class PlayerController2D : MonoBehaviour
         jumpPressedThisFrame = false;
     }
 
-    // ----------------------------
-    // JUMP
-    // ----------------------------
-    private void HandleJumpPhysics()
+    private void HandleVariableJumpCut()
     {
-        if (jumpBufferCounter > 0f && coyoteCounter > 0f)
+        Vector2 gravityDir = GetGravityDirection();
+        Vector2 jumpDir = -gravityDir;
+
+        float jumpSpeed = Vector2.Dot(rb.linearVelocity, jumpDir);
+
+        if (!jumpHeld && jumpSpeed > 0f)
         {
-            Vector2 v = rb.linearVelocity;
-            v.y = jumpForce;
-            rb.linearVelocity = v;
-
-            jumpBufferCounter = 0f;
-            coyoteCounter = 0f;
-
-            if (anim != null)
-                anim.Play("Player_JumpSquash", 0, 0f);
+            rb.linearVelocity -= jumpDir * jumpSpeed * (1f - jumpCutMultiplier);
         }
     }
 
-    private void HandleVariableJumpCut()
+    public void CancelHeldJump()
     {
-        if (!jumpHeld && rb.linearVelocity.y > 0f)
-        {
-            Vector2 v = rb.linearVelocity;
-            v.y *= jumpCutMultiplier;
-            rb.linearVelocity = v;
-        }
+        jumpHeld = false;
+        jumpPressedThisFrame = false;
+        jumpBufferCounter = 0f;
     }
 
     // ----------------------------
@@ -261,6 +342,24 @@ public class PlayerController2D : MonoBehaviour
     {
         canDash = false;
         isDashing = true;
+
+        // Stop jump from boosting dash
+        jumpHeld = false;
+        jumpPressedThisFrame = false;
+        jumpBufferCounter = 0f;
+        coyoteCounter = 0f;
+
+        Vector2 gravityDir = GetGravityDirection();
+        Vector2 jumpDir = -gravityDir;
+
+        // Remove upward/jump velocity before dash
+        float jumpVelocity = Vector2.Dot(rb.linearVelocity, jumpDir);
+
+        if (jumpVelocity > 0f)
+        {
+            rb.linearVelocity -= jumpDir * jumpVelocity;
+        }
+
         UpdateDashIndicator();
 
         rb.gravityScale = 0f;
@@ -281,6 +380,14 @@ public class PlayerController2D : MonoBehaviour
 
         isDashing = false;
         UpdateDashIndicator();
+    }
+
+    private Vector2 GetGravityDirection()
+    {
+        if (playerGravity != null)
+            return playerGravity.GravityDirection;
+
+        return Vector2.down;
     }
 
     private void UpdateDashIndicator()
@@ -308,6 +415,23 @@ public class PlayerController2D : MonoBehaviour
             afterimageColor,
             cubeSpriteRenderer.sortingOrder - 1
         );
+    }
+
+    public void PushPlayer(Vector2 direction, float force, float duration)
+    {
+        StartCoroutine(PushRoutine(direction, force, duration));
+    }
+
+    private IEnumerator PushRoutine(Vector2 direction, float force, float duration)
+    {
+        float timer = 0f;
+
+        while (timer < duration)
+        {
+            rb.linearVelocity = direction.normalized * force;
+            timer += Time.deltaTime;
+            yield return null;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

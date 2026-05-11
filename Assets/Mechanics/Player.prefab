@@ -195,6 +195,7 @@ GameObject:
   - component: {fileID: 1640771552952435918}
   - component: {fileID: 7004649853957111873}
   - component: {fileID: 3344272486997549740}
+  - component: {fileID: 4758696839703380140}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -235,7 +236,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -297,7 +298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveSpeed: 4
-  jumpForce: 8
+  jumpForce: 12
   jumpCutMultiplier: 0.7
   coyoteTime: 0.1
   jumpBufferTime: 0.1
@@ -369,6 +370,20 @@ MonoBehaviour:
   spawnAnimDuration: 0.3
   deathAnimDuration: 0.3
   finishAnimDuration: 0.3
+--- !u!114 &4758696839703380140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8891500196352443751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0bb1a13d176a134ba5b034607b107c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGravity2D
+  defaultGravityDirection: {x: 0, y: -1}
+  defaultGravityStrength: 22
 --- !u!1 &9150801805036102484
 GameObject:
   m_ObjectHideFlags: 0

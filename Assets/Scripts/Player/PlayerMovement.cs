@@ -75,6 +75,12 @@ public class PlayerController2D : MonoBehaviour
         controls.Player.Move.performed += ctx =>
         {
             moveVector = ctx.ReadValue<Vector2>();
+            if (moveVector.x != 0)
+                moveVector.x = Mathf.Sign(moveVector.x);
+
+            if (moveVector.y != 0)
+                moveVector.y = Mathf.Sign(moveVector.y);
+
             moveInput = moveVector.x;
         };
 
@@ -153,46 +159,35 @@ public class PlayerController2D : MonoBehaviour
     {
         Vector2 gravityDir = GetGravityDirection();
 
-        Vector2 moveDir;
+        Vector2 moveAxis;
 
-        if (gravityDir == Vector2.down)
-        {
-            moveDir = Vector2.right * moveVector.x;
-        }
-        else if (gravityDir == Vector2.up)
-        {
-            moveDir = Vector2.right * moveVector.x;
-        }
-        else if (gravityDir == Vector2.right)
-        {
-            moveDir = Vector2.up * moveVector.y;
-        }
+        if (gravityDir == Vector2.down || gravityDir == Vector2.up)
+            moveAxis = Vector2.right;
         else
-        {
-            moveDir = Vector2.up * moveVector.y;
-        }
+            moveAxis = Vector2.up;
 
-        // current velocity along gravity axis
-        Vector2 gravityVelocity =
-            gravityDir * Vector2.Dot(rb.linearVelocity, gravityDir);
+        float input;
 
-        // current sideways movement
-        Vector2 sidewaysVelocity =
-            moveDir * Vector2.Dot(rb.linearVelocity, moveDir.normalized);
+        if (gravityDir == Vector2.down || gravityDir == Vector2.up)
+            input = moveVector.x;
+        else
+            input = moveVector.y;
 
-        // target movement
-        Vector2 targetMoveVelocity = moveDir * moveSpeed;
+        Vector2 velocity = rb.linearVelocity;
 
-        // smoothly move toward target instead of replacing velocity
-        sidewaysVelocity = Vector2.Lerp(
-            sidewaysVelocity,
-            targetMoveVelocity,
+        float currentMoveSpeed = Vector2.Dot(velocity, moveAxis);
+        float targetMoveSpeed = input * moveSpeed;
+
+        float newMoveSpeed = Mathf.Lerp(
+            currentMoveSpeed,
+            targetMoveSpeed,
             12f * Time.fixedDeltaTime
         );
 
-        rb.linearVelocity = gravityVelocity + sidewaysVelocity;
-    }
+        velocity += moveAxis * (newMoveSpeed - currentMoveSpeed);
 
+        rb.linearVelocity = velocity;
+    }
     // ----------------------------
     // GROUND CHECK + TIMERS
     // ----------------------------
@@ -245,6 +240,24 @@ public class PlayerController2D : MonoBehaviour
         yield return new WaitForSeconds(duration);
 
         controlsLocked = false;
+    }
+
+    public void SetInputEnabled(bool enabled)
+    {
+        if (enabled)
+        {
+            controls.Player.Enable();
+        }
+        else
+        {
+            controls.Player.Disable();
+
+            moveVector = Vector2.zero;
+            moveInput = 0f;
+            jumpHeld = false;
+            jumpPressedThisFrame = false;
+            dashPressedThisFrame = false;
+        }
     }
 
     // ----------------------------

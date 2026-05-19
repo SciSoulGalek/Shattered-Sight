@@ -7,12 +7,14 @@ public static class GameProgress
     public static bool HasProgress { get; set; }
     public static int NextLevel { get; set; } = 1;
     public static int HighestUnlocked { get; set; } = 1;
+    public static bool TutorialSeen {get; set; }
 
     public static void ResetProgress()
     {
         HasProgress = false;
         NextLevel = 1;
         HighestUnlocked = 1;
+        TutorialSeen = false;
 
         SaveSystem.SaveGame();
     }

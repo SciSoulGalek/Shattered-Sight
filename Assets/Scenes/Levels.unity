@@ -4329,7 +4329,7 @@ MonoBehaviour:
   sceneName: Level10
   button: {fileID: 2089778006}
   label: {fileID: 413891557}
-  lockIcon: {fileID: 0}
+  lockIcon: {fileID: 211142777}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

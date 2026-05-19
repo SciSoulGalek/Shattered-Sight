@@ -7,14 +7,13 @@ public class PauseMenu : MonoBehaviour
     public string mainMenuSceneName = "MainMenu";
 
     private InputSystem_Actions controls;
+    public bool PauseLocked { get; set; }
     private bool isPaused = false;
 
     void Start()
     {
         if (pausePanel != null)
             pausePanel.SetActive(false);
-
-        Time.timeScale = 1f;
     }
 
     private void OnEnable()
@@ -26,7 +25,13 @@ public class PauseMenu : MonoBehaviour
     {
         controls = new InputSystem_Actions();
 
-        controls.Player.Pause.performed += ctx => TogglePause();
+        controls.Player.Pause.performed += ctx =>
+        {
+            if (PauseLocked)
+                return;
+        
+            TogglePause();
+        };
     }
     
     public void TogglePause()

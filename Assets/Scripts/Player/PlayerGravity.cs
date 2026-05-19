@@ -41,8 +41,12 @@ public class PlayerGravity2D : MonoBehaviour
 
     public void SetGravity(Vector2 direction, float strength)
     {
+        Vector2 oldVelocity = rb.linearVelocity;
+    
         GravityDirection = direction.normalized;
         GravityStrength = strength;
+    
+        rb.linearVelocity = oldVelocity;
     }
 
     public void ResetGravity()

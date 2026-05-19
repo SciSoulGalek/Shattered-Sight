@@ -316,7 +316,7 @@ MonoBehaviour:
   groundCheckRadius: 0.1
   groundLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 136
 --- !u!114 &1640771552952435918
 MonoBehaviour:
   m_ObjectHideFlags: 0

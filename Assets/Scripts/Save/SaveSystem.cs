@@ -11,7 +11,8 @@ public static class SaveSystem
         {
             highestUnlocked = GameProgress.HighestUnlocked,
             nextLevel = GameProgress.NextLevel,
-            hasProgress = GameProgress.HasProgress
+            hasProgress = GameProgress.HasProgress,
+            tutorialSeen = GameProgress.TutorialSeen
         };
 
         string json = JsonUtility.ToJson(data, true);
@@ -25,6 +26,7 @@ public static class SaveSystem
             GameProgress.HasProgress = false;
             GameProgress.NextLevel = 1;
             GameProgress.HighestUnlocked = 1;
+            GameProgress.TutorialSeen = false;
             return;
         }
 

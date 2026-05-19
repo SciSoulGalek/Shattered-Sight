@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &952687601183578918
+--- !u!1 &7626494049087736833
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,40 +8,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4049479035403472438}
-  - component: {fileID: 1040195785810595854}
-  - component: {fileID: 8870690508798548847}
-  - component: {fileID: 2586330893989823340}
-  - component: {fileID: 2047406864744906739}
-  m_Layer: 3
-  m_Name: LaserMirror
+  - component: {fileID: 3315883337154140076}
+  - component: {fileID: 8592979119177650006}
+  - component: {fileID: 3888054407240801543}
+  - component: {fileID: 5109615385510142955}
+  m_Layer: 0
+  m_Name: GravityOrb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4049479035403472438
+--- !u!4 &3315883337154140076
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 952687601183578918}
+  m_GameObject: {fileID: 7626494049087736833}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
-  m_LocalPosition: {x: 24.56, y: -7.8, z: 0}
-  m_LocalScale: {x: 0.5, y: 5, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 2.26, y: -15.78, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
---- !u!212 &1040195785810595854
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &8592979119177650006
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 952687601183578918}
+  m_GameObject: {fileID: 7626494049087736833}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -82,36 +81,24 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -6787258946059275383, guid: 11a86c46f54ad5d4a98d83366b071ef8, type: 3}
-  m_Color: {r: 0.016212158, g: 0.78113204, b: 0.5844716, a: 1}
+  m_Sprite: {fileID: 4483504832982471387, guid: b0aa0882248f6ab4f974ff5b9396d569, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.5, y: 0.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8870690508798548847
-MonoBehaviour:
+--- !u!58 &3888054407240801543
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 952687601183578918}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85bfd001934ebab488a0808e3b723d2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LaserMirror2D
---- !u!61 &2586330893989823340
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 952687601183578918}
+  m_GameObject: {fileID: 7626494049087736833}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -135,35 +122,25 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.5, y: 0.5}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 0.5, y: 0.5}
-  m_EdgeRadius: 0
---- !u!114 &2047406864744906739
+  m_Radius: 0.23632812
+--- !u!114 &5109615385510142955
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 952687601183578918}
+  m_GameObject: {fileID: 7626494049087736833}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfba3ad1d0a5d7f4d85eb5ebba4a28b6, type: 3}
+  m_Script: {fileID: 11500000, guid: b4863d5442d62004e8576e77eb6e3d90, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MirrorRotator2D
-  clockwisePlateID: 2
-  counterClockwisePlateID: 1
-  rotationStep: 10
-  rotationCooldown: 0.25
+  m_EditorClassIdentifier: Assembly-CSharp::GravityPickup2D
+  gravityDirection: {x: 0, y: 1}
+  gravityStrength: 22
+  respawnTime: 3
+  playerTag: Player

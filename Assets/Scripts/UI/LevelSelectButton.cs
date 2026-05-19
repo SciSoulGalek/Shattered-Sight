@@ -12,7 +12,7 @@ public class LevelSelectButton : MonoBehaviour
     public TextMeshProUGUI label; 
     public GameObject lockIcon;            
 
-    void Awake()
+    void Start()
     {
         if (!button)
             button = GetComponent<Button>();
